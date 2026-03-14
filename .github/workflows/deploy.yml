@@ -8,11 +8,12 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout do código
+        uses: actions/checkout@v4
       - name: Validar HTML
-        uses: htmlhint/htmlhint-action@v2
-        with:
-          rules: "tag-pair:true;attr-lowercase:true"
+        run: |
+          npm install -g htmlhint
+          htmlhint "**/*.html"
   
   build:
     needs: lint
