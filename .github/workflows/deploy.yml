@@ -1,0 +1,42 @@
+name: Pipeline CI/CD Estático
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validar HTML
+        uses: htmlhint/htmlhint-action@v2
+        with:
+          rules: "tag-pair:true;attr-lowercase:true"
+  
+  build:
+    needs: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Minificar HTML
+        run: |
+          mkdir public
+          # Simulação de comando que otimiza o arquivo
+          cp index.html public/index.html 
+      - name: Upload do Artefato
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'public/'
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: actions-poc
+    steps:
+      - name: Deploy para GitHub Pages
+        uses: actions/deploy-pages@v4
